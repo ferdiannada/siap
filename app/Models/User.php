@@ -45,4 +45,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function aspirasi()
+    {
+        return $this->hasMany(Aspirasi::class);
+    }
+
+    public function feedbackDiberikan()
+    {
+        return $this->hasMany(AspirasiFeedback::class, 'admin_id');
+    }
+
+    public function historiesDibuat()
+    {
+        return $this->hasMany(AspirasiHistory::class, 'admin_id');
+    }
 }

@@ -1,8 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Siswa\AspirasiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,4 +22,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     Route::get('/dashboard', fn() => view('siswa.dashboard'));
+});
+
+Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
+
+    Route::get('/dashboard', fn() => view('siswa.dashboard'));
+
+    Route::get('/aspirasi', [AspirasiController::class, 'index']);
+    Route::get('/aspirasi/create', [AspirasiController::class, 'create']);
+    Route::post('/aspirasi', [AspirasiController::class, 'store']);
+    Route::get('/aspirasi/{id}', [AspirasiController::class, 'show']);
+    Route::get('/aspirasi/{id}/edit', [AspirasiController::class, 'edit']);
+    Route::put('/aspirasi/{id}', [AspirasiController::class, 'update']);
+    Route::delete('/aspirasi/{id}', [AspirasiController::class, 'destroy']);
 });
