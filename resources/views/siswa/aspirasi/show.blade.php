@@ -16,4 +16,10 @@
     @endforeach
 </ul>
 
+@if($aspirasi->feedback)
+<hr>
+<h3>Feedback dari Admin</h3>
+<p>{{ $aspirasi->feedback->feedback }}</p>
+@endif
+
 <a href="/siswa/aspirasi">Kembali</a>

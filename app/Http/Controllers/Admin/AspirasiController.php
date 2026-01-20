@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Aspirasi;
-use App\Models\AspirasiHistory;
-use App\Models\AspirasiProgress;
 use Illuminate\Http\Request;
+use App\Models\AspirasiHistory;
+use App\Models\AspirasiFeedback;
+use App\Models\AspirasiProgress;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\StatusAspirasiNotification;
+use App\Notifications\FeedbackAspirasiNotification;
 
 class AspirasiController extends Controller
 {
@@ -16,7 +19,7 @@ class AspirasiController extends Controller
         $aspirasi = Aspirasi::with([
             'user',
             'category',
-            'feedback',
+            'feedback.admin',
             'progress',
             'histories.admin',
         ])->findOrFail($id);
@@ -44,6 +47,9 @@ class AspirasiController extends Controller
         $aspirasi->update([
             'status' => $statusBaru,
         ]);
+        $aspirasi->user->notify(
+            new StatusAspirasiNotification($aspirasi, $statusLama, $statusBaru)
+        );
 
         // Simpan ke histori otomatis
         AspirasiHistory::create([
@@ -83,5 +89,30 @@ class AspirasiController extends Controller
         }
 
         return back()->with('success', 'Progres berhasil ditambahkan.');
+    }
+
+    public function storeFeedback(Request $request, $id)
+    {
+        $request->validate([
+            'feedback' => 'required|string|min:5',
+        ]);
+
+        $aspirasi = Aspirasi::findOrFail($id);
+
+        AspirasiFeedback::updateOrCreate(
+            [
+                'aspirasi_id' => $aspirasi->id,
+            ],
+            [
+                'admin_id' => Auth::id(),
+                'feedback' => $request->feedback,
+            ]
+        );
+
+        $aspirasi->user->notify(
+            new FeedbackAspirasiNotification($aspirasi)
+        );
+
+        return back()->with('success', 'Feedback berhasil disimpan.');
     }
 }

@@ -1,65 +1,76 @@
-<h2>Dashboard Admin - List Aspirasi</h2>
+@extends('layouts.app')
+@section('title', 'Dashboard Admin')
 
-<form method="GET" action="/admin/dashboard">
-    <input type="date" name="tanggal" value="{{ request('tanggal') }}">
+@section('content')
+<h4>Dashboard Admin</h4>
 
-    <input type="month" name="bulan" value="{{ request('bulan') }}">
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-2">
 
-    <select name="siswa_id">
-        <option value="">-- Semua Siswa --</option>
-        @foreach($siswas as $s)
-        <option value="{{ $s->id }}" {{ request('siswa_id')==$s->id?'selected':'' }}>
-            {{ $s->name }} ({{ $s->nis }})
-        </option>
-        @endforeach
-    </select>
+            <div class="col-md-2">
+                <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
+            </div>
 
-    <select name="category_id">
-        <option value="">-- Semua Kategori --</option>
-        @foreach($categories as $c)
-        <option value="{{ $c->id }}" {{ request('category_id')==$c->id?'selected':'' }}>
-            {{ $c->nama }}
-        </option>
-        @endforeach
-    </select>
+            <div class="col-md-2">
+                <input type="month" name="bulan" class="form-control" value="{{ request('bulan') }}">
+            </div>
 
-    <select name="status">
-        <option value="">-- Semua Status --</option>
-        <option value="menunggu" {{ request('status')=='menunggu' ?'selected':'' }}>Menunggu</option>
-        <option value="diproses" {{ request('status')=='diproses' ?'selected':'' }}>Diproses</option>
-        <option value="selesai" {{ request('status')=='selesai' ?'selected':'' }}>Selesai</option>
-    </select>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">Semua Status</option>
+                    <option value="menunggu">Menunggu</option>
+                    <option value="diproses">Diproses</option>
+                    <option value="selesai">Selesai</option>
+                </select>
+            </div>
 
-    <button type="submit">Filter</button>
-    <a href="/admin/dashboard">Reset</a>
-</form>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">Filter</button>
+            </div>
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>No</th>
-        <th>Siswa</th>
-        <th>NIS</th>
-        <th>Kategori</th>
-        <th>Lokasi</th>
-        <th>Status</th>
-        <th>Tanggal</th>
-        <th>Aksi</th>
-    </tr>
+        </form>
+    </div>
+</div>
 
-    @foreach($aspirasi as $a)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $a->user->name }}</td>
-        <td>{{ $a->user->nis }}</td>
-        <td>{{ $a->category->nama }}</td>
-        <td>{{ $a->lokasi }}</td>
-        <td>{{ $a->status }}</td>
-        <td>{{ $a->created_at->format('d-m-Y') }}</td>
-        <td>
-            <a href="/admin/aspirasi/{{ $a->id }}">Detail</a>
-        </td>
-    </tr>
-    @endforeach
-</table>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Siswa</th>
+                    <th>Kategori</th>
+                    <th>Status</th>
+                    <th>Tanggal</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($aspirasi as $a)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $a->user->name }}</td>
+                    <td>{{ $a->category->nama }}</td>
+                    <td>
+                        <span class="badge 
+                            {{ $a->status=='menunggu'?'bg-warning':
+                               ($a->status=='diproses'?'bg-info':'bg-success') }}">
+                            {{ strtoupper($a->status) }}
+                        </span>
+                    </td>
+                    <td>{{ $a->created_at->format('d-m-Y') }}</td>
+                    <td>
+                        <a href="/admin/aspirasi/{{ $a->id }}" class="btn btn-sm btn-primary">
+                            Detail
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-{{ $aspirasi->withQueryString()->links() }}
+        {{ $aspirasi->links() }}
+    </div>
+</div>
+@endsection
