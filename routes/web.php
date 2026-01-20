@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AspirasiController as AdminAspirasiController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Siswa\AspirasiController as SiswaAspirasiController;
+use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,7 @@ Route::get('/register', [RegisterController::class, 'showRegister']);
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
     Route::get('/aspirasi/{id}', [AdminAspirasiController::class, 'show']);
     Route::post('/aspirasi/{id}/status', [AdminAspirasiController::class, 'updateStatus']);
     Route::post('/aspirasi/{id}/progress', [AdminAspirasiController::class, 'addProgress']);
@@ -38,7 +39,7 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
         Auth::user()->notifications()->find($id)->markAsRead();
         return back();
     });
-    Route::get('/dashboard', fn() => view('siswa.dashboard'));
+    Route::get('/dashboard', [SiswaDashboardController::class, 'index']);
 
     Route::get('/aspirasi', [SiswaAspirasiController::class, 'index']);
     Route::get('/aspirasi/create', [SiswaAspirasiController::class, 'create']);

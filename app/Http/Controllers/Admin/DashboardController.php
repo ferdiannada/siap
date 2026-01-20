@@ -40,7 +40,9 @@ class DashboardController extends Controller
             $query->where('status', $request->status);
         }
 
-        $aspirasi = $query->paginate(10);
+        $aspirasi = Aspirasi::with(['user', 'category'])
+            ->latest()
+            ->paginate(10); // pagination aktif
 
         $categories = Category::all();
         $siswas = User::where('role', 'siswa')->get();
