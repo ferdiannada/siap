@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Aspirasi;
-use Illuminate\Http\Request;
-use App\Models\AspirasiHistory;
-use App\Models\AspirasiFeedback;
-use App\Models\AspirasiProgress;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Notifications\StatusAspirasiNotification;
+use App\Models\Aspirasi;
+use App\Models\AspirasiFeedback;
+use App\Models\AspirasiHistory;
+use App\Models\AspirasiProgress;
 use App\Notifications\FeedbackAspirasiNotification;
+use App\Notifications\StatusAspirasiNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AspirasiController extends Controller
 {
-    public function show($id)
+    public function index()
+    {
+        $aspirasi = Aspirasi::with('user', 'category')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.aspirasi.index', compact('aspirasi'));
+    }
+    public function show(Request $request, $id)
     {
         $aspirasi = Aspirasi::with([
             'user',
@@ -23,6 +31,14 @@ class AspirasiController extends Controller
             'progress',
             'histories.admin',
         ])->findOrFail($id);
+
+        // 🔔 AUTO MARK NOTIFICATION AS READ
+        if ($request->notif) {
+            Auth::user()
+                ->notifications()
+                ->where('id', $request->notif)
+                ->update(['read_at' => now()]);
+        }
 
         return view('admin.aspirasi.show', compact('aspirasi'));
     }
@@ -38,26 +54,31 @@ class AspirasiController extends Controller
         $statusLama = $aspirasi->status;
         $statusBaru = $request->status;
 
-        // Jika status sama, tidak perlu update
         if ($statusLama === $statusBaru) {
             return back()->with('info', 'Status tidak berubah.');
         }
 
-        // Update status aspirasi
+        // Update status utama
         $aspirasi->update([
             'status' => $statusBaru,
         ]);
-        $aspirasi->user->notify(
-            new StatusAspirasiNotification($aspirasi, $statusLama, $statusBaru)
-        );
 
-        // Simpan ke histori otomatis
+        // Simpan histori (UNTUK TIMELINE & LOG)
         AspirasiHistory::create([
             'aspirasi_id' => $aspirasi->id,
             'status_lama' => $statusLama,
             'status_baru' => $statusBaru,
             'admin_id' => Auth::id(),
         ]);
+
+        // Kirim notifikasi ke siswa
+        $aspirasi->user->notify(
+            new StatusAspirasiNotification(
+                $aspirasi,
+                $statusLama,
+                $statusBaru
+            )
+        );
 
         return back()->with('success', 'Status berhasil diperbarui.');
     }

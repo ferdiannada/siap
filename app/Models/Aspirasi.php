@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Aspirasi extends Model
 {
@@ -16,6 +16,7 @@ class Aspirasi extends Model
         'category_id',
         'lokasi',
         'deskripsi',
+        'foto',
         'status',
     ];
 

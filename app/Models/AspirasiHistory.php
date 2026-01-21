@@ -11,8 +11,6 @@ class AspirasiHistory extends Model
 
     protected $table = 'aspirasi_histories';
 
-    public $timestamps = false;
-
     protected $fillable = [
         'aspirasi_id',
         'status_lama',

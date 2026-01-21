@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('status_lama');
             $table->string('status_baru');
             $table->foreignId('admin_id')->constrained('users');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

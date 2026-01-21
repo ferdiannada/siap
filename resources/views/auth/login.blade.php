@@ -12,7 +12,12 @@
     <form method="POST" action="/login">
         @csrf
 
+        @error('username')
+        {{ $message }}
+        @enderror
+        
         <input type="email" name="email" placeholder="Email" required>
+
         <input type="password" name="password" placeholder="Password" required>
 
         <button type="submit">Login</button>

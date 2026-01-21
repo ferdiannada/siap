@@ -28,21 +28,38 @@ class AspirasiController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'lokasi' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
+            'category_id' => 'required',
+            'lokasi' => 'required',
+            'deskripsi' => 'required|min:10',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // === SIMPAN FOTO TEMPORARY ===
+        if ($request->hasFile('foto')) {
+            $tmpPath = $request->file('foto')->store('tmp', 'public');
+            session(['tmp_foto' => $tmpPath]);
+        }
+
+        // SIMPAN DATA FINAL
+        $fotoFinal = session('tmp_foto');
 
         Aspirasi::create([
             'user_id' => Auth::id(),
             'category_id' => $request->category_id,
             'lokasi' => $request->lokasi,
             'deskripsi' => $request->deskripsi,
+            'foto' => $fotoFinal,
             'status' => 'menunggu',
         ]);
 
-        return redirect('/siswa/aspirasi')->with('success', 'Aspirasi berhasil dikirim.');
+        // HAPUS SESSION TMP
+        session()->forget('tmp_foto');
+
+        return redirect('/siswa/aspirasi')
+            ->with('success', 'Aspirasi berhasil dikirim');
+
     }
 
     public function show($id)
