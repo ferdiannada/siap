@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Siswa;
 use App\Http\Controllers\Controller;
 use App\Models\Aspirasi;
 use App\Models\Category;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,10 +13,16 @@ class AspirasiController extends Controller
 {
     public function index()
     {
+        $now = Carbon::now();
+
         $aspirasi = Aspirasi::where('user_id', Auth::id())
             ->with('category')
             ->latest()
-            ->get();
+            ->paginate(6)
+            ->through(function ($item) use ($now) {
+                $item->is_new = $item->created_at->diffInHours($now) <= 24;
+                return $item;
+            });
 
         return view('siswa.aspirasi.index', compact('aspirasi'));
     }

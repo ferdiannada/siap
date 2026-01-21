@@ -5,75 +5,136 @@
 <div class="fade-slide">
 
     <!-- HEADER -->
-    <div class="mb-4">
-        <h4 class="fw-bold">
-            <i class="bi bi-clipboard-data text-primary"></i>
-            Detail Aspirasi
-        </h4>
-        <p class="text-muted">Kelola laporan aspirasi siswa</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">
+                <i class="bi bi-file-earmark-text-fill text-primary"></i>
+                Detail Aspirasi
+            </h4>
+            <p class="text-muted mb-0">
+                Informasi lengkap laporan aspirasi siswa
+            </p>
+        </div>
+
+        <a href="/admin/aspirasi" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
     </div>
 
-    <!-- INFO ASPIRASI -->
-    <div class="card shadow-sm hover-card mb-3">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><i class="bi bi-person-fill"></i> <b>Siswa:</b> {{ $aspirasi->user->name }}</p>
-                    <p><i class="bi bi-tags-fill"></i> <b>Kategori:</b> {{ $aspirasi->category->nama }}</p>
+    <!-- STATUS BIG -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body d-flex justify-content-between align-items-center">
+
+            <div>
+                <h6 class="text-muted mb-1">Status Aspirasi</h6>
+                <span class="badge-status fs-6
+                    {{ $aspirasi->status=='menunggu' ? 'bg-warning' :
+                       ($aspirasi->status=='diproses' ? 'bg-info' : 'bg-success') }}">
+                    <i class="bi
+                        {{ $aspirasi->status=='menunggu' ? 'bi-hourglass-split' :
+                           ($aspirasi->status=='diproses' ? 'bi-gear-fill' : 'bi-check-circle-fill') }}">
+                    </i>
+                    {{ ucfirst($aspirasi->status) }}
+                </span>
+            </div>
+
+            <div class="text-muted">
+                <i class="bi bi-clock"></i>
+                {{ $aspirasi->created_at->format('d M Y, H:i') }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-md-8">
+
+            <!-- INFO SISWA -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-person-fill text-primary"></i>
+                        Informasi Siswa
+                    </h6>
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <td width="150">Nama</td>
+                            <td>: <strong>{{ $aspirasi->user->name }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Kelas</td>
+                            <td>: {{ $aspirasi->user->kelas }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>: {{ $aspirasi->user->email }}</td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="col-md-6">
-                    <p><i class="bi bi-geo-alt-fill"></i> <b>Lokasi:</b> {{ $aspirasi->lokasi }}</p>
-                    <p>
-                        <i class="bi bi-flag-fill"></i> <b>Status Saat Ini:</b>
-                        <span class="badge 
-                            {{ $aspirasi->status=='menunggu'?'bg-warning':
-                               ($aspirasi->status=='diproses'?'bg-info':'bg-success') }}">
-                            {{ strtoupper($aspirasi->status) }}
+            </div>
+
+            <!-- DETAIL ASPIRASI -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-chat-left-text-fill text-success"></i>
+                        Detail Aspirasi
+                    </h6>
+
+                    <div class="mb-3">
+                        <span class="badge rounded-pill bg-secondary">
+                            {{ $aspirasi->category->nama }}
                         </span>
+                    </div>
+
+                    <p class="mb-2">
+                        <strong>Lokasi:</strong><br>
+                        <i class="bi bi-geo-alt-fill text-danger"></i>
+                        {{ $aspirasi->lokasi }}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Deskripsi:</strong><br>
+                        {{ $aspirasi->deskripsi }}
                     </p>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- DESKRIPSI -->
-    <div class="card shadow-sm hover-card mb-3">
-        <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-chat-left-text-fill text-success"></i>
-            Deskripsi Aspirasi
-        </div>
-        <div class="card-body">
-            {{ $aspirasi->deskripsi }}
-        </div>
-    </div>
+            <!-- FOTO BUKTI -->
+            @if($aspirasi->foto)
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-camera-fill text-info"></i>
+                        Foto Bukti
+                    </h6>
 
-    <!-- FOTO -->
-    @if($aspirasi->foto)
-    <div class="card shadow-sm hover-card mb-3">
-        <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-camera-fill text-info"></i>
-            Foto Bukti Kerusakan
-        </div>
-        <div class="card-body text-center">
-            <img src="{{ asset('storage/'.$aspirasi->foto) }}" class="img-fluid rounded zoom-img"
-                style="max-height:300px" data-bs-toggle="modal" data-bs-target="#fotoModal">
-            <p class="text-muted mt-2">Klik gambar untuk memperbesar</p>
-        </div>
-    </div>
-    @endif
+                    <img src="{{ asset('storage/'.$aspirasi->foto) }}" class="img-fluid rounded zoom-img"
+                        style="max-height:350px">
+                </div>
+            </div>
+            @endif
 
-    <!-- FORM UBAH STATUS -->
-    <div class="card shadow-sm hover-card mb-3">
-        <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-arrow-repeat text-warning"></i>
-            Ubah Status Aspirasi
         </div>
-        <div class="card-body">
-            <form action="/admin/aspirasi/{{ $aspirasi->id }}/status" method="POST">
-                @csrf
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <select name="status" class="form-select">
+
+        <!-- RIGHT -->
+        <div class="col-md-4">
+
+            <!-- UPDATE STATUS -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-arrow-repeat text-primary"></i>
+                        Ubah Status
+                    </h6>
+
+                    <form action="/admin/aspirasi/{{ $aspirasi->id }}/status" method="POST">
+                        @csrf
+
+                        <select name="status" class="form-select mb-3">
                             <option value="menunggu" {{ $aspirasi->status=='menunggu'?'selected':'' }}>
                                 Menunggu
                             </option>
@@ -84,55 +145,39 @@
                                 Selesai
                             </option>
                         </select>
-                    </div>
-                    <div class="col-md-6">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-save"></i> Simpan Status
+
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-save-fill"></i>
+                            Simpan Status
                         </button>
-                    </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
 
-    <!-- FORM FEEDBACK -->
-    <div class="card shadow-sm hover-card">
-        <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-send-fill text-success"></i>
-            Feedback untuk Siswa
-        </div>
-        <div class="card-body">
-            <form action="/admin/aspirasi/{{ $aspirasi->id }}/feedback" method="POST">
-                @csrf
-                <textarea name="feedback" rows="4" class="form-control mb-3"
-                    placeholder="Tulis feedback untuk siswa...">{{ $aspirasi->feedback->feedback ?? '' }}</textarea>
+            <!-- FEEDBACK -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-chat-dots-fill text-success"></i>
+                        Feedback Admin
+                    </h6>
 
-                <button class="btn btn-success">
-                    <i class="bi bi-check-circle"></i>
-                    {{ $aspirasi->feedback ? 'Update Feedback' : 'Kirim Feedback' }}
-                </button>
-            </form>
+                    <form action="/admin/aspirasi/{{ $aspirasi->id }}/feedback" method="POST">
+                        @csrf
+                        <textarea name="feedback" class="form-control mb-3" rows="4"
+                            placeholder="Tulis feedback untuk siswa...">{{ $aspirasi->feedback }}</textarea>
+
+                        <button class="btn btn-success w-100">
+                            <i class="bi bi-send-fill"></i>
+                            Kirim Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
+
     </div>
 
 </div>
-
-<!-- MODAL FOTO -->
-@if($aspirasi->foto)
-<div class="modal fade" id="fotoModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-image"></i> Foto Bukti Kerusakan
-                </h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img src="{{ asset('storage/'.$aspirasi->foto) }}" class="img-fluid rounded">
-            </div>
-        </div>
-    </div>
-</div>
-@endif
 @endsection

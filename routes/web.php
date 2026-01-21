@@ -1,15 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\AspirasiController as AdminAspirasiController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SiswaController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Siswa\AspirasiController as SiswaAspirasiController;
+use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\SiswaController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\AspirasiController as AdminAspirasiController;
-use App\Http\Controllers\Siswa\AspirasiController as SiswaAspirasiController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,14 +36,33 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    // siswa import
     Route::get('/siswa/import', [SiswaController::class, 'importForm']);
     Route::post('/siswa/import', [SiswaController::class, 'import']);
+    // reset password
+    Route::get('/siswa/reset-password',
+        [SiswaController::class, 'resetPasswordForm']);
+
+    Route::post('/siswa/reset-password',
+        [SiswaController::class, 'resetPassword']);
 
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     Route::get('/notifikasi', function () {
-        $notifikasi = Auth::user()->notifications;
+        $notifikasi = Auth::user()
+            ->notifications()
+            ->latest()
+            ->paginate(10);
+
+        // Jika request AJAX → return JSON
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => $notifikasi->items(),
+                'next_page_url' => $notifikasi->nextPageUrl(),
+            ]);
+        }
+
         return view('siswa.notifikasi', compact('notifikasi'));
     });
 
@@ -51,6 +70,15 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
         Auth::user()->notifications()->find($id)->markAsRead();
         return back();
     });
+
+    Route::post('/notifikasi/read-all', function () {
+        Auth::user()
+            ->unreadNotifications
+            ->markAsRead();
+
+        return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
+    });
+
     Route::get('/dashboard', [SiswaDashboardController::class, 'index']);
 
     Route::get('/aspirasi', [SiswaAspirasiController::class, 'index']);

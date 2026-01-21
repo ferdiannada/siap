@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\Models\Aspirasi;
-use App\Models\AspirasiFeedback;
-use App\Models\AspirasiHistory;
-use App\Models\AspirasiProgress;
-use App\Notifications\FeedbackAspirasiNotification;
-use App\Notifications\StatusAspirasiNotification;
 use Illuminate\Http\Request;
+use App\Models\AspirasiHistory;
+use App\Models\AspirasiFeedback;
+use App\Models\AspirasiProgress;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\StatusAspirasiNotification;
+use App\Notifications\FeedbackAspirasiNotification;
 
 class AspirasiController extends Controller
 {
     public function index()
     {
-        $aspirasi = Aspirasi::with('user', 'category')
+        $now = Carbon::now();
+
+        $aspirasi = Aspirasi::with(['user', 'category'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->through(function ($item) use ($now) {
+                $item->is_new = $item->created_at->diffInHours($now) <= 24;
+                return $item;
+            });
 
         return view('admin.aspirasi.index', compact('aspirasi'));
     }

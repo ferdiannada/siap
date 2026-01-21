@@ -1,0 +1,321 @@
+/* =====================================================
+   GLOBAL ANIMATION
+===================================================== */
+.fade-slide {
+    animation: fadeSlide 0.6s ease-in-out;
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+.table-hover tbody tr {
+    transition: 0.25s ease;
+}
+
+.table-hover tbody tr:hover {
+    background: #f8f9ff;
+    transform: scale(1.003);
+}
+
+/* =====================================================
+   CARD & HOVER EFFECT
+===================================================== */
+.hover-card,
+.stat-card,
+.action-card,
+.aspirasi-card {
+    transition: 0.25s ease;
+}
+
+.hover-card:hover,
+.stat-card:hover,
+.action-card:hover,
+.aspirasi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   BADGE STATUS
+===================================================== */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    color: #fff;
+}
+
+/* =====================================================
+   IMAGE ZOOM
+===================================================== */
+.zoom-img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.zoom-img:hover {
+    transform: scale(1.03);
+}
+
+/* =====================================================
+   TIMELINE
+===================================================== */
+.timeline {
+    list-style: none;
+    padding-left: 0;
+    position: relative;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 50px;
+    margin-bottom: 25px;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    line-height: 22px;
+}
+
+/* =====================================================
+   STEPPER
+===================================================== */
+.animated-stepper {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.animated-stepper::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #dee2e6;
+    z-index: 1;
+}
+
+.stepper-progress {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: #0d6efd;
+    z-index: 2;
+    transition: width 0.8s ease-in-out;
+}
+
+.stepper-item {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    width: 100%;
+}
+
+.step-counter {
+    width: 44px;
+    height: 44px;
+    background: #dee2e6;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #6c757d;
+    transition: all 0.4s ease;
+}
+
+.step-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.stepper-item.completed .step-counter {
+    background: #198754;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.stepper-item.active .step-counter {
+    background: #0d6efd;
+    color: #fff;
+    animation: pulse 1.2s infinite;
+}
+
+.stepper-item.completed .step-name {
+    color: #198754;
+}
+
+.stepper-item.active .step-name {
+    color: #0d6efd;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+    }
+}
+
+/* =====================================================
+   SIDEBAR LINK (ADMIN & SISWA)
+===================================================== */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    color: #adb5bd;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+.sidebar-link i {
+    font-size: 18px;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.sidebar-link.active {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.35);
+}
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
+.notif-item {
+    transition: all 0.25s ease;
+    border-left: 5px solid transparent;
+}
+
+.notif-item.unread {
+    background: #f8f9ff;
+    border-left-color: #0d6efd;
+}
+
+.notif-item.read {
+    opacity: 0.75;
+}
+
+.notif-item:hover {
+    transform: translateX(4px);
+    background: #f1f3f9;
+}
+
+.notif-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+}
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+.dashboard-welcome {
+    background: linear-gradient(135deg, #0d6efd, #4dabf7);
+    color: #fff;
+    border-radius: 16px;
+}
+
+.stat-glass {
+    border-radius: 16px;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.stat-glass:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-glass.primary {
+    background: linear-gradient(135deg, #0d6efd, #4dabf7);
+}
+.stat-glass.warning {
+    background: linear-gradient(135deg, #f59f00, #fab005);
+}
+.stat-glass.info {
+    background: linear-gradient(135deg, #15aabf, #22b8cf);
+}
+.stat-glass.success {
+    background: linear-gradient(135deg, #2f9e44, #51cf66);
+}
+
+/* =====================================================
+   HIGHLIGHT ASPIRASI BARU
+===================================================== */
+.aspirasi-new {
+    border: 2px solid #dc3545;
+    animation: pulseNew 1.8s infinite;
+}
+
+.table-new {
+    background: #fff5f5;
+}
+
+@keyframes pulseNew {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
