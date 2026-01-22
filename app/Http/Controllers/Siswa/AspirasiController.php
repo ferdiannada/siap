@@ -11,18 +11,26 @@ use Illuminate\Support\Facades\Auth;
 
 class AspirasiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $now = Carbon::now();
-
-        $aspirasi = Aspirasi::where('user_id', Auth::id())
+        $query = Aspirasi::where('user_id', Auth::id())
             ->with('category')
-            ->latest()
-            ->paginate(6)
-            ->through(function ($item) use ($now) {
-                $item->is_new = $item->created_at->diffInHours($now) <= 24;
-                return $item;
-            });
+            ->latest();
+
+        // =========================
+        // FILTER STATUS
+        // =========================
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $aspirasi = $query->paginate(6)->withQueryString();
+
+        // FLAG "BARU" = BELUM DIBACA SISWA
+        $aspirasi->getCollection()->transform(function ($item) {
+            $item->is_new = is_null($item->dibaca_siswa_at);
+            return $item;
+        });
 
         return view('siswa.aspirasi.index', compact('aspirasi'));
     }
@@ -72,8 +80,18 @@ class AspirasiController extends Controller
     public function show($id)
     {
         $aspirasi = Aspirasi::where('user_id', Auth::id())
-            ->with(['category', 'feedback', 'progress'])
+            ->with(['category', 'feedback', 'histories'])
             ->findOrFail($id);
+        // dd($aspirasi);
+
+        // =====================================
+        // TANDAI ASPIRASI SUDAH DIBACA SISWA
+        // =====================================
+        if (is_null($aspirasi->dibaca_siswa_at)) {
+            $aspirasi->update([
+                'dibaca_siswa_at' => Carbon::now(),
+            ]);
+        }
 
         return view('siswa.aspirasi.show', compact('aspirasi'));
     }

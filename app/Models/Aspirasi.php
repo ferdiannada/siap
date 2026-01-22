@@ -18,6 +18,7 @@ class Aspirasi extends Model
         'deskripsi',
         'foto',
         'status',
+        'dibaca_siswa_at',
     ];
 
     public function user()
