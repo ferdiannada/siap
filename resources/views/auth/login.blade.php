@@ -256,10 +256,10 @@
                             </p>
 
                             @if(session('error'))
-                            <div class="alert alert-danger">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                                {{ session('error') }}
-                            </div>
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    {{ session('error') }}
+                                </div>
                             @endif
 
                             <form action="/login" method="POST" id="loginForm">
@@ -274,9 +274,9 @@
                                     </label>
 
                                     @error('email')
-                                    <div class="invalid-feedback d-block">
-                                        {{ $message }}
-                                    </div>
+                                        <div class="invalid-feedback d-block">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
 
@@ -294,9 +294,9 @@
                                     </span>
 
                                     @error('password')
-                                    <div class="invalid-feedback d-block">
-                                        {{ $message }}
-                                    </div>
+                                        <div class="invalid-feedback d-block">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
 
@@ -324,30 +324,30 @@
 
     <script>
         function togglePassword() {
-    const pass = document.getElementById('password');
-    const icon = document.getElementById('eyeIcon');
+            const pass = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
 
-    if (pass.type === 'password') {
-        pass.type = 'text';
-        icon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
-    } else {
-        pass.type = 'password';
-        icon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
-    }
-}
+            if (pass.type === 'password') {
+                pass.type = 'text';
+                icon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
+            } else {
+                pass.type = 'password';
+                icon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
+            }
+        }
     </script>
     <script>
         const form = document.getElementById('loginForm');
 
-form.addEventListener('submit', function () {
+        form.addEventListener('submit', function () {
 
-    // Tampilkan overlay loading
-    document.getElementById('loginOverlay')
-        .classList.remove('d-none');
+            // Tampilkan overlay loading
+            document.getElementById('loginOverlay')
+                .classList.remove('d-none');
 
-    // Fade out halaman
-    document.body.classList.add('fade-out');
-});
+            // Fade out halaman
+            document.body.classList.add('fade-out');
+        });
     </script>
 
 
